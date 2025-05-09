@@ -1,0 +1,153 @@
+$(function () {
+	//获取cookies
+	var nwdUser = getCookie("cookieUname");
+	if(!window.httpsUrl){
+		httpsUrl = "";
+	}
+	if(!window.httpUrl){ 
+		httpUrl = "";
+	}
+	if(nwdUser){
+		//头部登陆信息
+		var loginHtml = "<input type='hidden' value='' id='log_userid'/>" +
+		"<input type='hidden' value='"+nwdUser+"' id='log_username'/>" +
+			"您好，<a href='"+httpsUrl+"/assets/account/accountDetail' class='mar_l10 toplogin'>"+nwdUser+"</a>"+
+			"<a href='"+httpUrl+"/loginOut.html' id='loginOut' class='mar_r10 mar_l10 toplogin'>退出</a>";
+		
+		$('#login_bt').html(loginHtml);
+		
+		//头像
+		var uPhoto = getCookie("cookieUphoto");
+		if(uPhoto){
+			uPhoto = uPhoto.replace(/\"/g, "");//cookie取值带引号
+			if(uPhoto){
+				$("#smallImg").prop("src","/account/member/memberPhotoView.do?imgPath="+uPhoto);
+			}else{
+				$("#smallImg").prop("src",staticCss+"/manage/images/touxiang.jpg");
+			}
+		}else{
+			$("#smallImg").prop("src",staticCss+"/manage/images/touxiang.jpg");
+		}
+		//banner登陆信息
+		$('#static_banner_login').html("<a class='btn_orange' href='"+httpsUrl+"/assets/account/accountDetail' rel='nofollow' title='账户中心'>账户中心</a>");
+	} else {
+		var loginHtml ="您好，<a href='"+httpsUrl+"/login.html' class='mar_l10 toplogin' title='登录'>请登录</a>"+
+			"<a href='http://www.niwodai.com/multiRegister.html?artId=5820160000010275' class='mar_r10 mar_l10 toplogin' title='注册'>免费注册</a>";
+		$('#login_bt').html(loginHtml);
+	}
+	//读取cookies 
+	function getCookie(name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(name + "=");
+			if (c_start != -1) {
+				c_start = c_start + name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return "";
+	}
+	
+	function setCookie(name, value, d) {
+		var Days = 30;
+		var exp = new Date();
+		if (d > 0)
+			Days = d;
+		exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+		document.cookie = name + "=" + escape(value)
+				+ ";path=/;domain=.niwodai.com;expires=" + exp.toGMTString();
+	}
+	
+	$(".index_Close a").click(function(){
+		$("#fol_div1").hide();
+		$("#fol_div2").hide();
+	});
+	
+});
+
+function toolbar(){
+	if(typeof(custUrl)=="undefined"||custUrl==null){
+		custUrl="";
+	}
+	var html = "<div class='floatbox01'>"+"<a href='http://www.niwodai.com/daikuan/' rel='nofollow'  class='linka daikuan' target='_blank'>&nbsp;</a>"+"<a href='/userFeedback/opinion.html' rel='nofollow'  class='linka feedback' target='_blank'>&nbsp;</a>"+custUrl+
+	"<a href='javaScript:;' rel='nofollow'  class='linka onlinewx' style='cursor:default'><i>&nbsp;</i></a>"+
+	"<a href='javaScript:;' rel='nofollow' class='back-top' rel='nofollow'  id='tbar' style='display:none; z-index:9999'><i></i></a></div>";
+	$('body').append(html);
+}
+
+function goTopEx(){
+    function getScrollTop(){ 
+            return document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+        }
+    function setScrollTop(value){
+            document.documentElement.scrollTop?document.documentElement.scrollTop=value:document.body.scrollTop=value;
+        }
+    window.onscroll=function(){
+		getScrollTop()>0?obj.style.display="block":obj.style.display="none";
+		var scrollTop=$(document).scrollTop();
+		var wHeight=$(window).height();
+					
+	}
+	var obj=document.getElementById("tbar");
+    obj.onclick=function(){
+        var goTop=setInterval(scrollMove,10);
+        function scrollMove(){
+                setScrollTop(getScrollTop()/1.1);
+                if(getScrollTop()<1)clearInterval(goTop);
+            }
+    }
+}
+//在线客服
+toolbar();
+goTopEx();
+var newright = $("body").width()/2+605;
+$(".floatbox01").css({"left":newright,"bottom":"40px","position":"fixed"})
+
+
+//6月19右下角在线客服
+$(function(){
+    var protocol = document.location.protocol.toLowerCase();
+
+	$("#onlineQQService,#onlineQQService1").click(function(){
+		
+		var uuid,cururl,referer,channel,sw,sh,bw,bh,isSetCookie,pvUrl,src,userid,pagetype,headerUrl;
+		if(protocol == "https:"){
+			headerUrl="https://collector.niwodai.com/?";
+		}else{
+			headerUrl="http://collector.niwodai.net/?";
+		}
+		
+		src=getSrc();
+		uuid = getUuid('UNQID');
+		cururl = document.location.href.replace(/&/g,'~@~');
+		referer = document.referrer.replace(/&/g,'~@~');
+		channel=getChannel();
+		sw=screen.width;
+		sh=screen.height;
+		bw = document.body.clientWidth;
+		bh = document.body.clientHeight;
+		isSetCookie=window.navigator.cookieEnabled;
+
+		var buttonStr="uuid="+encodeURIComponent(uuid)+"&uid=null&t=button&src="+encodeURIComponent(src)+"&cid="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagetype="+encodeURIComponent(pagetype)+"&time="+encodeURIComponent(new Date().valueOf()) +
+        "&buttonid=onlineQQService";
+		var buttonUrl=headerUrl+buttonStr;
+		var img = document.createElement("img");
+		img.src = buttonUrl;
+		
+	});
+    //公共右下角在线客服
+    var onlineQQService = $("#onlineQQService");
+    if(onlineQQService){
+    	if(protocol == "https:"){
+            onlineQQService.attr("href","http://crm2.qq.com/page/portalpage/wpa.php?uin=4007910888&f=1&ty=1&aty=0&a=&from=5");
+            onlineQQService.attr("target","_blank");
+        }else{
+            onlineQQService.attr("href","http://crm2.qq.com/page/portalpage/wpa.php?uin=4007910888&f=1&ty=1&aty=0&a=&from=5");
+            onlineQQService.attr("target","_blank");
+        }
+    }
+});

@@ -1,0 +1,41 @@
+/** 会员等级 **/
+.vip_icon{background:url(../img/icon_vip.png) no-repeat scroll left top;display: inline-block; vertical-align: middle;}
+.step1_128{width:128px; height: 128px; background-position: 0 0;}
+.step2_128{width:128px; height: 128px; background-position: -142px 0;}
+.step3_128{width:128px; height: 128px; background-position: -284px 0;}
+.step4_128{width:128px; height: 128px; background-position: -426px 0;}
+.step5_128{width:128px; height: 128px; background-position: -568px 0;}
+.step6_128{width:128px; height: 128px; background-position: -710px 0;}
+
+.step1_64{width:64px; height: 64px; background-position: 0 -142px;}
+.step2_64{width:64px; height: 64px; background-position: -142px -142px;}
+.step3_64{width:64px; height: 64px; background-position: -284px -142px;}
+.step4_64{width:64px; height: 64px; background-position: -426px -142px;}
+.step5_64{width:64px; height: 64px; background-position: -568px -142px;}
+.step6_64{width:64px; height: 64px; background-position: -710px -142px;}
+
+.step1_32{width:32px; height: 32px; background-position: 0 -215px;}
+.step2_32{width:32px; height: 32px; background-position: -142px -215px;}
+.step3_32{width:32px; height: 32px; background-position: -284px -215px;}
+.step4_32{width:32px; height: 32px; background-position: -426px -215px;}
+.step5_32{width:32px; height: 32px; background-position: -568px -215px;}
+.step6_32{width:32px; height: 32px; background-position: -710px -215px;}
+
+.step1_16{width:16px; height: 16px; background-position: -0px -425px;}
+.step2_16{width:16px; height: 16px; background-position: -24px -425px;}
+.step3_16{width:16px; height: 16px; background-position: -48px -425px;}
+.step4_16{width:16px; height: 16px; background-position: -72px -425px;}
+.step5_16{width:16px; height: 16px; background-position: -96px -425px;}
+.step6_16{width:16px; height: 16px; background-position: -120px -425px;}
+.step7_16{width:16px; height: 16px; background-position: -144px -425px;}
+
+.step1_head{width:14px; height: 14px; background-position: -8px -402px;}
+.step2_head{width:14px; height: 14px; background-position: -30px -402px;}
+.step3_head{width:14px; height: 14px; background-position: -52px -402px;}
+.step4_head{width:14px; height: 14px; background-position: -76px -402px;}
+.step5_head{width:14px; height: 14px; background-position: -98px -402px;}
+.step6_head{width:14px; height: 14px; background-position: -120px -402px;}
+
+
+
+

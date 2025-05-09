@@ -1,0 +1,204 @@
+function uuid(len, radix) {
+    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    var uuid = [], i;
+    radix = radix || chars.length;
+
+    if (len) {
+        for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
+    } else {
+        var r;
+        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+        uuid[14] = '4';
+
+        for (i = 0; i < 36; i++) {
+            if (!uuid[i]) {
+                r = 0 | Math.random()*16;
+                uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+            }
+        }
+    }
+    return uuid.join('');
+}
+
+function bi_setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";domain=.niwodai.com"+ ";" + expires+";path=/";
+}
+
+function bi_getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+    }
+    return null;
+}
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return decodeURI(r[2]);
+    return null;
+}
+function getChannel(){
+    var source = getQueryString('utm_source');
+    var medium = getQueryString('utm_medium');
+    var campaign = getQueryString('utm_campaign');
+    var content = getQueryString('utm_content');
+    var term = getQueryString('utm_term');
+    var cid = getQueryString('cid');
+    if(!cid){
+        cid = getQueryString('nwd_ext_aid')
+    }
+    if(!cid){
+        cid = getQueryString('extsid')
+    }
+    var c="na";
+    var m;
+    if(source==""||source==null) {source=c}
+    if(medium==""||medium==null){medium=c}
+    if(campaign==""||campaign==null){campaign=c}
+    if(content==""||content==null){content=c}
+    if(term==""||term==null){term=c}
+    if(cid==""||cid==null){cid=c}
+    m=source+"|"+medium+"|"+campaign+"|"+content+"|"+term+"|"+cid;
+    if (window.navigator.cookieEnabled==true){
+        if(bi_getCookie('channelid')==null){
+            bi_setCookie('channelid',encodeURIComponent(m),1);
+            return m;
+        } else if (m!='na|na|na|na|na|na'){
+            bi_setCookie('channelid',encodeURIComponent(m),1);
+            return m;
+        }else {
+            return bi_getCookie('channelid');
+        }
+    }else {
+        return m;
+    }
+}
+var cururl,referer,channel,sw,sh,bw,bh,isSetCookie,src,userid,pagetype,appkey,specter_sessionid;
+
+function getSrc(){
+    var url=window.location.host;
+    if (url.indexOf("m.niwodai.com")>-1) {
+        appkey="d7dae78639fb543ed58feb4baa030609";
+        return "wap";
+    } else {
+        appkey="e48801a2fb6b3a4f2790910860cf51c1";
+        return "pc";
+    }
+}
+
+function clickFunc(id,url){
+    url+="&buttonid="+id;
+    url=encodeURI(url);
+    $("#"+id).click(function(){
+        $.ajax({
+            type: "get",
+            url: url,
+            async: true,
+            dataType: 'jsonp',
+            jsonpCallback: "cb"
+        });
+    });
+}
+
+function ajaxReq(url){
+    new Fingerprint2().get(function(result){
+        var img = document.createElement("img");
+        if(bi_getCookie("FPID")==null){
+            img.src = url+"&fpid="+result;
+            bi_setCookie("FPID",result,730);
+        }else {
+            img.src = url+"&fpid="+bi_getCookie('FPID');
+        }
+    });
+}
+function cb(data) {
+}
+
+function sessionid() {
+    if(window.navigator.cookieEnabled==true){
+        if (bi_getCookie('specterid')==null){
+            bi_setCookie('specterid',uuid(64,64),0.02083333);
+            return bi_getCookie('specterid');
+        }else {
+            bi_setCookie('specterid',bi_getCookie('specterid'),0.02083333)
+            return bi_getCookie('specterid');
+        }
+    }else{
+        return uuid(64,64);
+    }
+}
+
+var headerUrl="https://specter.niwodai.com/?";
+
+
+
+src=getSrc();
+cururl = document.location.href;
+referer = document.referrer;
+channel=getChannel();
+sw=screen.width;
+sh=screen.height;
+bw = document.body.clientWidth;
+bh = document.body.clientHeight;
+isSetCookie=window.navigator.cookieEnabled==true?1:0;
+specter_sessionid=sessionid();
+
+//register
+function registerPoint(userid,pagename) {
+    var registerStr="uid="+encodeURIComponent(userid)+"&t=register&src="+encodeURIComponent(src)+"&channel="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagename="+encodeURIComponent(pagename)+"&time="+encodeURIComponent(new Date().valueOf())+
+        "&appkey="+appkey+"&sessionid="+specter_sessionid;
+    ajaxReq(headerUrl+registerStr);
+}
+//login
+function loginPoint(userid,pagename) {
+    var loginStr="uid="+encodeURIComponent(userid)+"&t=login&src="+encodeURIComponent(src)+"&channel="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagename="+encodeURIComponent(pagename)+"&time="+encodeURIComponent(new Date().valueOf())+
+        "&appkey="+appkey+"&sessionid="+specter_sessionid;
+    ajaxReq(headerUrl+loginStr);
+}
+
+//pageview
+function buryPoint(userid,pagename){
+    userid = userid;
+    pagetype = pagename;
+    var pvstr="uid="+encodeURIComponent(userid)+"&t=pageview&src="+encodeURIComponent(src)+"&channel="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagename="+encodeURIComponent(pagename)+"&time="+encodeURIComponent(new Date().valueOf())+
+        "&appkey="+appkey+"&sessionid="+specter_sessionid;
+    ajaxReq(headerUrl+pvstr);
+}
+//transaction
+function transFunc(userid,pagename,transtype,amount){
+    var transStr="uid="+encodeURIComponent(userid)+"&t=transaction&src="+encodeURIComponent(src)+"&channel="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagename="+encodeURIComponent(pagename)+"&time="+encodeURIComponent(new Date().valueOf())+
+        "&appkey="+appkey+"&type="+transtype+"&amount="+amount+"&sessionid="+specter_sessionid;
+    ajaxReq(headerUrl+transStr);
+}
+
+//button
+function buttonPoint(buttonid,userid,pagename){
+    var buttonstr="uid="+encodeURIComponent(userid)+"&t=button&src="+encodeURIComponent(src)+"&channel="+ encodeURIComponent(channel)+
+        "&sr="+encodeURIComponent(sw)+"_"+encodeURIComponent(sh)+""+"&bp="+encodeURIComponent(bw)+"_"+encodeURIComponent(bh)+ "&cookie="+encodeURIComponent(isSetCookie)+
+        "&refer="+encodeURIComponent(referer)+"&cururl="+encodeURIComponent(cururl)+"&pagename="+encodeURIComponent(pagename)+"&time="+encodeURIComponent(new Date().valueOf())+
+        "&appkey="+appkey+"&buttonid="+buttonid+"&sessionid="+specter_sessionid;
+    $("#"+buttonid).click(function(){
+        var img = document.createElement("img");
+        img.src = (headerUrl+buttonstr);
+    });
+}
+
+
+function clickPoint() {
+
+}
